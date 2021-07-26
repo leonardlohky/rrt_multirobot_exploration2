@@ -1,0 +1,27 @@
+<launch>
+<!-- turtle bot declation -->
+
+<!-- include octomap for the first turtle bot -->
+<!-- <include file="$(find ros_3d_multitb3)/launch/includes/octomap.launch">
+  <arg name="namespace" value="" /> -->
+  <!-- <arg name="frame_id" value="velodyne"/> -->
+  <!-- <arg name="base_footprint" value="/vision60_1/base_footprint"/> -->
+  <!-- <arg name="pointcloud" value="/vision60_1/modified_velodyne_points"/>
+</include> -->
+
+<!-- <node pkg="tf" type="static_transform_publisher" name="world_to_velodyne_tf_broadcaster"  args="0 0 0 0 0 0 /vision60_1/map /vision60_1/modified_velodyne_points 100"/> -->
+
+<!-- <node pkg="tf" type="static_transform_publisher" name="world_to_velodyne_tf_broadcaster"  args="0 0 0 0 0 0 /vision60_1/map /vision60_1/modified_velodyne_points 100"/>
+<node pkg="tf" type="static_transform_publisher" name="world_to_odom_tf_broadcaster"  args="0 0 0 0 0 0 /vision60_1/map /vision60_1/odom 100"/>
+<node pkg="tf" type="static_transform_publisher" name="world_to_base_tf_broadcaster"  args="0 0 0 0 0 0 /vision60_1/map /vision60_1/base_footprint 100"/>
+<node pkg="tf" type="static_transform_publisher" name="world_to_scan_tf_broadcaster"  args="0 0 0 0 0 0 /vision60_1/map /vision60_1/scan 100"/> -->
+<node name="octomap" pkg="octomap_server" type="octomap_server_node">
+  <param name="frame_id" value="/velodyne"/>
+  <param name="resolution" value=".4"/>
+</node>
+
+<!-- rviz -->
+  <node pkg="rviz" type="rviz" name="rviz" required="true"
+        args="-d $(find ros_3d_multitb3)/rviz/rosbag_check.rviz"/>
+
+</launch>
