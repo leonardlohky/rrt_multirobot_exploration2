@@ -1,0 +1,29 @@
+<launch>
+	<arg name="first_tb3" default="tb3_1"/>
+	<arg name="second_tb3" default="tb3_2"/>
+	<arg name="third_tb3" default="tb3_0"/>
+	<arg name="frame_id" default="world"/>
+	<arg name="pointcloud" default="/octomap_manager1/octomap_pcl"/>
+
+	<!-- <group ns = "/$(arg namespace)"> -->
+	<node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+		<param name="resolution" value="0.05" />
+		<param name="frame_id" type="string" value="$(arg frame_id)" />
+		<param name="sensor_model/max_range" value="8.0" />
+		<param name="filter_ground" value="true" />
+
+		<remap from="cloud_in" to="$(arg pointcloud)" />
+		<!-- mapping for the upcoming data -->
+		<remap from="projected_map" to="map" />
+		
+		<!-- <remap from="cloud_in" to="$(arg pointcloud)" /> -->
+	</node>
+	
+	<!-- </group> -->
+	<node pkg="tf" type="static_transform_publisher" name="world_to_mergedmap_tf_broadcaster"  args="0.385 0.385 0 0 0 0 world map 100"/>
+
+	<node pkg="tf" type="static_transform_publisher" name="world_to_$(arg first_tb3)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg first_tb3)/map 100"/>
+	<node pkg="tf" type="static_transform_publisher" name="world_to_$(arg second_tb3)_tf_broadcaster" args="0 0 0 0 0 0 /map /$(arg second_tb3)/map 100"/>
+	<node pkg="tf" type="static_transform_publisher" name="world_to_$(arg third_tb3)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg third_tb3)/map 100"/>
+
+</launch>
