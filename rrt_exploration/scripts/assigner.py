@@ -81,10 +81,15 @@ def node():
 
 	robots=[]
 	if len(namespace)>0:
+		print('namespace :' + namespace)
+		print('n_robots  :' + str(n_robots))
 		for i in range(0,n_robots):
+			print('working on initializing robot  :' + namespace+str(i+namespace_init_count))
 			robots.append(robot(namespace+str(i+namespace_init_count)))
 	elif len(namespace)==0:
-			robots.append(robot(namespace))
+		print('single robot - namespace' + namespace)
+		robots.append(robot(namespace))
+
 	for i in range(0,n_robots):
 		rospy.loginfo('setting initial position for robot ' + namespace+str(i+namespace_init_count))	
 		robots[i].sendGoal(robots[i].getPosition())

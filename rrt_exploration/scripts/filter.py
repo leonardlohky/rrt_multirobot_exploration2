@@ -128,6 +128,7 @@ def node():
 
     # wait if no frontier is received yet
     while len(frontiers) < 1:
+        rospy.loginfo('no frontiers received')
         pass
 
     points = Marker()
@@ -206,14 +207,17 @@ def node():
             ms.fit(front)
             centroids = ms.cluster_centers_  # centroids array is the centers of each cluster
 
+            rospy.loginfo('clustering')
         # if there is only one frontier no need for clustering, i.e. centroids=frontiers
         if len(front) == 1:
             centroids = front
+
         frontiers = copy(centroids)
 # -------------------------------------------------------------------------
 # clearing old frontiers
 
         z = 0
+        print("Total number of centroids: %d" % len(centroids))
         while z < len(centroids):
             cond1 = False
             cond2 = False
@@ -226,24 +230,37 @@ def node():
                     globalmaps[i].header.frame_id, temppoint)
                 x = array([transformedPoint.point.x, transformedPoint.point.y])
                 cond1 = (gridValue(globalmaps[i], x) > threshold) or cond1
-                # rospy.loginfo('clearing old frontiers- cond1')
+#                 if not cond1:
+#                     rospy.loginfo('adding frontier into list')
+#                     print(gridValue(globalmaps[i], x))
+#                     print(threshold)
+#                 else:
+#                     rospy.loginfo('clearing old frontiers- cond1')
+#                     print(gridValue(globalmaps[i], x))
+#                     print(threshold)
             for j in range(0, len(invalidFrontier)):
                 if centroids[z][0] == invalidFrontier[j][0] and centroids[z][1] == invalidFrontier[j][1]:
                     cond2 = True
+                    rospy.loginfo('clearing old frontiers- cond2')
             if (cond1 or cond2 or (informationGain(mapData, [centroids[z][0], centroids[z][1]], info_radius*0.5)) < 0.4):
                 centroids = delete(centroids, (z), axis=0)
                 z = z-1
             z += 1
-
-            # rospy.loginfo('clearing old frontiers')
+            rospy.loginfo('valid centroids remaining ---' + str(len(centroids)))
+            print(temppoint.point)
 # -------------------------------------------------------------------------
 # publishing
         arraypoints.points = []
+        print("Number of centroids to be published: %d" % len(centroids))
         for i in centroids:
+            print('%f %f' %(i[0], i[1]))
             tempPoint.x = i[0]
             tempPoint.y = i[1]
-            arraypoints.points.append(copy(tempPoint))
+            # arraypoints.points.append(copy(tempPoint))
+            arraypoints.points.append(tempPoint)
+        print(arraypoints.points)
         filterpub.publish(arraypoints)
+        rospy.loginfo('publish the Point array')
         pp = []
         for q in range(0, len(frontiers)):
             p.x = frontiers[q][0]
@@ -258,7 +275,6 @@ def node():
         points_clust.points = pp
         pub.publish(points)
         pub2.publish(points_clust)
-        # rospy.loginfo('publish the filtered frontier')
         rate.sleep()
 # -------------------------------------------------------------------------
 
