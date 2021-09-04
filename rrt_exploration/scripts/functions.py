@@ -116,7 +116,7 @@ def point_of_index(mapData, i):
     # print(">>> i-pos  : %f" %(mapData.info.origin.position.x))
     # print(">>> map_res: %f" %mapData.info.resolution)
     # print(">>> final output: %f" %zz)
-    
+
     return array([x, y])
 # ________________________________________________________________________________
 
@@ -132,8 +132,6 @@ def informationGain(mapData, point, r):
         limit = ((start/mapData.info.width)+2)*mapData.info.width
         for i in range(start, end+1):
             if (i >= 0 and i < limit and i < len(mapData.data)):
-                print("point: ", array(point))
-                print("point_of_index: ", point_of_index(mapData, i))
                 if(mapData.data[i] == -1 and norm(array(point)-point_of_index(mapData, i)) <= r):
                     infoGain += 1
     return infoGain*(mapData.info.resolution**2)
